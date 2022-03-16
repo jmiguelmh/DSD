@@ -40,6 +40,42 @@ _dividir_1 (dividir_1_argument *argp, struct svc_req *rqstp)
 	return (dividir_1_svc(argp->a, argp->b, rqstp));
 }
 
+static float *
+_seno_2 (float  *argp, struct svc_req *rqstp)
+{
+	return (seno_2_svc(*argp, rqstp));
+}
+
+static float *
+_coseno_2 (float  *argp, struct svc_req *rqstp)
+{
+	return (coseno_2_svc(*argp, rqstp));
+}
+
+static float *
+_tangente_2 (float  *argp, struct svc_req *rqstp)
+{
+	return (tangente_2_svc(*argp, rqstp));
+}
+
+static float *
+_arcoseno_3 (float  *argp, struct svc_req *rqstp)
+{
+	return (arcoseno_3_svc(*argp, rqstp));
+}
+
+static float *
+_arcocoseno_3 (float  *argp, struct svc_req *rqstp)
+{
+	return (arcocoseno_3_svc(*argp, rqstp));
+}
+
+static float *
+_arcotangente_3 (float  *argp, struct svc_req *rqstp)
+{
+	return (arcotangente_3_svc(*argp, rqstp));
+}
+
 static void
 calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
@@ -102,20 +138,140 @@ calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
+static void
+calculadora_2(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		float seno_2_arg;
+		float coseno_2_arg;
+		float tangente_2_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case SENO:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _seno_2;
+		break;
+
+	case COSENO:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _coseno_2;
+		break;
+
+	case TANGENTE:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _tangente_2;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
+static void
+calculadora_3(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		float arcoseno_3_arg;
+		float arcocoseno_3_arg;
+		float arcotangente_3_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case ARCOSENO:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _arcoseno_3;
+		break;
+
+	case ARCOCOSENO:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _arcocoseno_3;
+		break;
+
+	case ARCOTANGENTE:
+		_xdr_argument = (xdrproc_t) xdr_float;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) _arcotangente_3;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
 int
 main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
-	pmap_unset (CALCULADORA, CALCULADORA1);
+	pmap_unset (CALCULADORA, CALCULADORA_ARITMETICA);
+	pmap_unset (CALCULADORA, CALCULADORA_TRIGONOMETRICA);
+	pmap_unset (CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
 		fprintf (stderr, "%s", "cannot create udp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, CALCULADORA, CALCULADORA1, calculadora_1, IPPROTO_UDP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA1, udp).");
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_ARITMETICA, calculadora_1, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_ARITMETICA, udp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_TRIGONOMETRICA, calculadora_2, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_TRIGONOMETRICA, udp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA, calculadora_3, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA, udp).");
 		exit(1);
 	}
 
@@ -124,8 +280,16 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "cannot create tcp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, CALCULADORA, CALCULADORA1, calculadora_1, IPPROTO_TCP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA1, tcp).");
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_ARITMETICA, calculadora_1, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_ARITMETICA, tcp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_TRIGONOMETRICA, calculadora_2, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_TRIGONOMETRICA, tcp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA, calculadora_3, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA, tcp).");
 		exit(1);
 	}
 

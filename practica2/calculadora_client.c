@@ -6,39 +6,39 @@
 
 #include "calculadora.h"
 
-void calculadora_1(char *host, float numero1, float numero2, char operador)
+void calculadora_aritmetica(char *host, float numero1, float numero2, char operador)
 {
 	CLIENT *clnt;
 	float *result;
 
-	#ifndef DEBUG
-		clnt = clnt_create(host, CALCULADORA, CALCULADORA1, "udp");
-		if (clnt == NULL)
-		{
-			clnt_pcreateerror(host);
-			exit(1);
-		}
-	#endif /* DEBUG */
+#ifndef DEBUG
+	clnt = clnt_create(host, CALCULADORA, CALCULADORA_ARITMETICA, "udp");
+	if (clnt == NULL)
+	{
+		clnt_pcreateerror(host);
+		exit(1);
+	}
+#endif /* DEBUG */
 
 	switch (operador)
 	{
-		case '+':
-			result = sumar_1(numero1, numero2, clnt);
-			break;
+	case '+':
+		result = sumar_1(numero1, numero2, clnt);
+		break;
 
-		case '-':
-			result = restar_1(numero1, numero2, clnt);
-			break;
-		
-		case 'x':
-			result = multiplicar_1(numero1, numero2, clnt);
-			break;
-		
-		case '/':
-			result = dividir_1(numero1, numero2, clnt);
-			break;
+	case '-':
+		result = restar_1(numero1, numero2, clnt);
+		break;
+
+	case 'x':
+		result = multiplicar_1(numero1, numero2, clnt);
+		break;
+
+	case '/':
+		result = dividir_1(numero1, numero2, clnt);
+		break;
 	}
-	
+
 	if (result == (float *)NULL)
 	{
 		clnt_perror(clnt, "call failed");
@@ -46,47 +46,202 @@ void calculadora_1(char *host, float numero1, float numero2, char operador)
 
 	printf("El resultado es: %f\n", *result);
 
-	#ifndef DEBUG
-		clnt_destroy(clnt);
-	#endif /* DEBUG */
+#ifndef DEBUG
+	clnt_destroy(clnt);
+#endif /* DEBUG */
 }
 
-int existe(char operador, const char* operadores, int tam)
+void calculadora_trigonometrica(char *host, float angulo)
+{
+	CLIENT *clnt;
+	float *seno, *coseno, *tangente;
+
+#ifndef DEBUG
+	clnt = clnt_create(host, CALCULADORA, CALCULADORA_TRIGONOMETRICA, "udp");
+	if (clnt == NULL)
+	{
+		clnt_pcreateerror(host);
+		exit(1);
+	}
+#endif /* DEBUG */
+
+	seno = seno_2(angulo, clnt);
+	if (seno == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+
+	coseno = coseno_2(angulo, clnt);
+	if (coseno == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+
+	tangente = tangente_2(angulo, clnt);
+	if (tangente == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+
+	printf("Seno: %f\n", *seno);
+	printf("Coseno: %f\n", *coseno);
+	printf("Tangente: %f\n", *tangente);
+
+#ifndef DEBUG
+	clnt_destroy(clnt);
+#endif /* DEBUG */
+}
+
+void calculadora_trigonometrica_inversa(char *host, float numero)
+{
+	CLIENT *clnt;
+	float *arcoseno, *arcocoseno, *arcotangente;
+
+#ifndef DEBUG
+	clnt = clnt_create(host, CALCULADORA, CALCULADORA_TRIGONOMETRICA_INVERSA, "udp");
+	if (clnt == NULL)
+	{
+		clnt_pcreateerror(host);
+		exit(1);
+	}
+#endif /* DEBUG */
+
+	arcoseno = arcoseno_3(numero, clnt);
+	if (arcoseno == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+	arcocoseno = arcocoseno_3(numero, clnt);
+	if (arcocoseno == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+	arcotangente = arcotangente_3(numero, clnt);
+	if (arcotangente == (float *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+
+	printf("Seno inverso: %f radianes o %f grados\n", *arcoseno, *arcoseno * 180.0 / PI);
+	printf("Coseno inverso: %f radianes o %f grados\n", *arcocoseno, *arcocoseno * 180.0 / PI);
+	printf("Tangente inversa: %f radianes o %f grados\n", *arcotangente, *arcotangente * 180.0 / PI);
+
+#ifndef DEBUG
+	clnt_destroy(clnt);
+#endif /* DEBUG */
+}
+
+// @brief dice si un operador se encuentra entre un array de operadores
+// @param operador operador a consultar si existe en el array
+// @param operadores array donde se busca el operador
+// @param tam tamanio del array operadores
+// @return 0 si no se encuentra, 1 si se encuentra
+int operador_valido(char operador, const char *operadores, int tam)
 {
 	int resultado = 0;
 
-	for(int i = 0; i < tam && resultado == 0; i++)
-		if(operadores[i] == operador)
+	for (int i = 0; i < tam && resultado == 0; i++)
+	{
+		if (operador == operadores[i])
 			resultado = 1;
-	
+	}
+
 	return resultado;
 }
 
 int main(int argc, char *argv[])
 {
 	char *host;
-	float numero1, numero2;
-	char operador;
-	const char operadores[4] = {'+', '-', 'x', '/'};
 
-	if (argc != 5)
+	if (argc != 2)
 	{
 		printf("Número de parámetros incorrecto\n");
-		printf("Sintaxis: <programa> <servidor> <numero1> <operador> <numero2>\n");
+		printf("Sintaxis: <programa> <servidor>\n");
 		exit(1);
 	}
-
 	host = argv[1];
-	numero1 = atof(argv[2]);
-	operador = argv[3][0];
-	numero2 = atof(argv[4]);
 
-	if (existe(operador, operadores, 4) == 0)
+	system("clear");
+
+seleccion:
+	printf("Calculadora\n");
+	printf("Seleccione una operacion:\n");
+	printf("1) Aritmeticas simples\n");
+	printf("2) Trigonometricas\n");
+	printf("3) Trigonometricas inversas\n");
+	printf("Opcion: ");
+
+	int opcion;
+	float numero1, numero2;
+	char operador;
+
+	scanf("%d", &opcion);
+	if (opcion < 1 || opcion > num_opciones)
 	{
-		printf("El operador introducido no es válido\n");
-		exit(1);
+		system("clear");
+		goto seleccion;
 	}
 
-	calculadora_1(host, numero1, numero2, operador);
+	system("clear");
+
+	switch (opcion)
+	{
+	case 1:
+		printf("Operaciones aritmeticas simples:\n");
+		printf("Los operadores válidos son: + - x /\n");
+		printf("Escriba la expresión como se indica: <numero1> <operador> <numero2>\n");
+
+		float numero1 = 0.0f, numero2 = 0.0f, resultado = 0.0f;
+		const char operadores[num_operaciones_aritmeticas] = {'+', '-', 'x', '/'};
+		char operador;
+
+		do
+		{
+			scanf("%f %c %f", &numero1, &operador, &numero2);
+			if (!operador_valido(operador, operadores, num_operaciones_aritmeticas))
+			{
+				printf("No se ha reconocido el operador introducido\n");
+				printf("Los operadores válidos son: + - x /\n");
+			}
+		} while (!operador_valido(operador, operadores, num_operaciones_aritmeticas));
+
+		calculadora_aritmetica(host, numero1, numero2, operador);
+		break;
+
+	case 2:
+		printf("Operaciones trigonometricas:\n");
+		printf("El formato es: <numero> <unidad>\n");
+		printf("Utilice en unidad \"r\" para radianes y \"g\" para grados\n");
+		printf("Angulo: ");
+
+		float angulo = 0.0f;
+		char unidad;
+
+		do
+		{
+			scanf("%f %c", &angulo, &unidad);
+			if (unidad != 'r' && unidad != 'g')
+			{
+				printf("No se ha reconocido la unidad\n");
+				printf("Las unidades válidas son: r g\n");
+			}
+		} while (unidad != 'r' && unidad != 'g');
+
+		if (unidad == 'g')
+			angulo = angulo * PI / 180.0f;
+
+		calculadora_trigonometrica(host, angulo);
+		break;
+
+	case 3:
+		printf("Operaciones trigonometricas inversas:\n");
+		printf("Introduzca un numero: ");
+
+		float numero = 0.0f;
+		scanf("%f", &numero);
+
+		calculadora_trigonometrica_inversa(host, numero);
+		break;
+	}
 	exit(0);
 }

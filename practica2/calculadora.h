@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+#define num_opciones 3
+#define num_operaciones_aritmeticas 4
+#define PI 3.14159265358979323846
 
 struct sumar_1_argument {
 	float a;
@@ -39,7 +42,7 @@ struct dividir_1_argument {
 typedef struct dividir_1_argument dividir_1_argument;
 
 #define CALCULADORA 0x20000001
-#define CALCULADORA1 1
+#define CALCULADORA_ARITMETICA 1
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define SUMAR 1
@@ -70,6 +73,58 @@ extern  float * multiplicar_1_svc();
 extern  float * dividir_1();
 extern  float * dividir_1_svc();
 extern int calculadora_1_freeresult ();
+#endif /* K&R C */
+#define CALCULADORA_TRIGONOMETRICA 2
+
+#if defined(__STDC__) || defined(__cplusplus)
+#define SENO 5
+extern  float * seno_2(float , CLIENT *);
+extern  float * seno_2_svc(float , struct svc_req *);
+#define COSENO 6
+extern  float * coseno_2(float , CLIENT *);
+extern  float * coseno_2_svc(float , struct svc_req *);
+#define TANGENTE 7
+extern  float * tangente_2(float , CLIENT *);
+extern  float * tangente_2_svc(float , struct svc_req *);
+extern int calculadora_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+#define SENO 5
+extern  float * seno_2();
+extern  float * seno_2_svc();
+#define COSENO 6
+extern  float * coseno_2();
+extern  float * coseno_2_svc();
+#define TANGENTE 7
+extern  float * tangente_2();
+extern  float * tangente_2_svc();
+extern int calculadora_2_freeresult ();
+#endif /* K&R C */
+#define CALCULADORA_TRIGONOMETRICA_INVERSA 3
+
+#if defined(__STDC__) || defined(__cplusplus)
+#define ARCOSENO 8
+extern  float * arcoseno_3(float , CLIENT *);
+extern  float * arcoseno_3_svc(float , struct svc_req *);
+#define ARCOCOSENO 9
+extern  float * arcocoseno_3(float , CLIENT *);
+extern  float * arcocoseno_3_svc(float , struct svc_req *);
+#define ARCOTANGENTE 10
+extern  float * arcotangente_3(float , CLIENT *);
+extern  float * arcotangente_3_svc(float , struct svc_req *);
+extern int calculadora_3_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+#define ARCOSENO 8
+extern  float * arcoseno_3();
+extern  float * arcoseno_3_svc();
+#define ARCOCOSENO 9
+extern  float * arcocoseno_3();
+extern  float * arcocoseno_3_svc();
+#define ARCOTANGENTE 10
+extern  float * arcotangente_3();
+extern  float * arcotangente_3_svc();
+extern int calculadora_3_freeresult ();
 #endif /* K&R C */
 
 /* the xdr functions */

@@ -5,6 +5,7 @@
  */
 
 #include "calculadora.h"
+#include <math.h>
 
 float *
 sumar_1_svc(float a, float b,  struct svc_req *rqstp)
@@ -14,9 +15,7 @@ sumar_1_svc(float a, float b,  struct svc_req *rqstp)
 	/*
 	 * insert server code here
 	 */
-
 	result = a + b;
-
 	return &result;
 }
 
@@ -28,9 +27,7 @@ restar_1_svc(float a, float b,  struct svc_req *rqstp)
 	/*
 	 * insert server code here
 	 */
-
 	result = a - b;
-
 	return &result;
 }
 
@@ -42,9 +39,7 @@ multiplicar_1_svc(float a, float b,  struct svc_req *rqstp)
 	/*
 	 * insert server code here
 	 */
-
 	result = a * b;
-
 	return &result;
 }
 
@@ -56,8 +51,78 @@ dividir_1_svc(float a, float b,  struct svc_req *rqstp)
 	/*
 	 * insert server code here
 	 */
-
 	result = a / b;
+	return &result;
+}
 
+float *
+seno_2_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = sin(a);
+	return &result;
+}
+
+float *
+coseno_2_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = cos(a);
+	return &result;
+}
+
+float *
+tangente_2_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = tan(a);
+	return &result;
+}
+
+float *
+arcoseno_3_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = asin(a);
+	return &result;
+}
+
+float *
+arcocoseno_3_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = acos(a);
+	return &result;
+}
+
+float *
+arcotangente_3_svc(float a,  struct svc_req *rqstp)
+{
+	static float  result;
+
+	/*
+	 * insert server code here
+	 */
+	result = atan(a);
 	return &result;
 }

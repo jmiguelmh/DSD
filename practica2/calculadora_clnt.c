@@ -76,3 +76,93 @@ dividir_1(float a, float b,  CLIENT *clnt)
 	}
 	return (&clnt_res);
 }
+
+float *
+seno_2(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, SENO,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+float *
+coseno_2(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, COSENO,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+float *
+tangente_2(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, TANGENTE,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+float *
+arcoseno_3(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, ARCOSENO,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+float *
+arcocoseno_3(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, ARCOCOSENO,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+float *
+arcotangente_3(float a,  CLIENT *clnt)
+{
+	static float clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, ARCOTANGENTE,
+		(xdrproc_t) xdr_float, (caddr_t) &a,
+		(xdrproc_t) xdr_float, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
