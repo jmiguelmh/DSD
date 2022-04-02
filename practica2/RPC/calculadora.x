@@ -20,9 +20,3 @@ program CALCULADORA {
         float ARCOTANGENTE (float a) = 10; 
     } = 3;
 } = 0x20000001;
-
-/*  
-    void SUMA_MATRICES (struct matriz m1, struct matriz m2, struct matriz resultado) = 11;
-    void RESTA_MATRICES (struct matriz m1, struct matriz m2, struct matriz resultado) = 12;
-    void MULTIPLICAR_MATRICES(struct matriz m1, struct matriz m2, struct matriz resultado) = 13;
-*/
