@@ -17,8 +17,7 @@ public interface InterfazServidorReplica extends Remote {
     public float obtenerSubtotalDonado() throws RemoteException;
 
     // Confirma el registro de un cliente en un servidor a partir de su nombre, password y nombre del servidor
-    // Devuelve true si se registra, false si el registro falla
-    public boolean confirmarRegistroCliente(String nombreCliente, String password, String nombreServidor) throws RemoteException;
+    public void confirmarRegistroCliente(String nombreCliente, String password, String nombreServidor) throws RemoteException;
 
     // Devuelve una referencia a la replica del servidor a partir del host y el nombre del servidor replica
     public InterfazServidorReplica obtenerReplica(String host, String nombreReplica) throws RemoteException;
@@ -27,8 +26,7 @@ public interface InterfazServidorReplica extends Remote {
     public String obtenerNombreServidor() throws RemoteException;
 
     // Incrementa el subtotal donado en el servidor
-    // Devuelve true si la donacion tiene existo, false si falla
-    public boolean incrementarSubtotalDonado(float donacion) throws RemoteException;
+    public void incrementarSubtotalDonado(float donacion) throws RemoteException;
 
     // Confirma si un cliente se ha identificado correctamente entre servidores
     // Devuelve true si su nombre y password son correctas
