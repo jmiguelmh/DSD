@@ -6,8 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class Donaciones extends UnicastRemoteObject implements InterfazServidorCliente, InterfazServidorReplica {
-
+public class DonacionesServidor extends UnicastRemoteObject implements InterfazServidorCliente, InterfazServidorReplica {
     private String servidor;
     private String replica;
     private float subtotalDonado;
@@ -15,7 +14,7 @@ public class Donaciones extends UnicastRemoteObject implements InterfazServidorC
     private Map<String, Cliente> clientesRegistrados;
 
     // Constructor
-    public Donaciones(String servidor, String replica) throws RemoteException {
+    public DonacionesServidor(String servidor, String replica) throws RemoteException {
         this.servidor = servidor;
         this.replica = replica;
         this.subtotalDonado = 0.0f;
@@ -65,7 +64,7 @@ public class Donaciones extends UnicastRemoteObject implements InterfazServidorC
     // Devuelve el nombre en el que se ha registrado el cliente
     @Override
     public String identificarCliente(String nombreCliente, String password) throws RemoteException {
-        String nombreServidor = null;
+        String nombreServidor = "";
         boolean registrado = this.existeCliente(nombreCliente);
         boolean identificado;
 
@@ -73,7 +72,7 @@ public class Donaciones extends UnicastRemoteObject implements InterfazServidorC
             InterfazServidorReplica servidorReplica = this.obtenerReplica("localhost", this.replica);
             boolean registradoEnReplica = servidorReplica.existeCliente(nombreCliente);
 
-            if (!registradoEnReplica) {
+            if (registradoEnReplica) {
                 identificado = servidorReplica.confirmarIdentificacionCliente(nombreCliente, password);
 
                 if(identificado)
@@ -86,13 +85,6 @@ public class Donaciones extends UnicastRemoteObject implements InterfazServidorC
         }
 
         return nombreServidor;
-    }
-
-    // Devuelve el dinero total donado de un cliente
-    @Override
-    public float obtenerTotalDonadoCliente(String nombreCliente) throws RemoteException {
-        Cliente cliente = clientesRegistrados.get(nombreCliente);
-        return cliente.obtenerDonacion();
     }
 
     // Comprueba si existe el cliente en clientesRegistrados

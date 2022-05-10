@@ -16,6 +16,6 @@ public interface InterfazServidorCliente extends Remote {
     // Devuelve el nombre del servidor donde esta registrado para seguir comunicandose con ese servidor 
     public String identificarCliente(String nombreCliente, String password) throws RemoteException;
 
-    // Obtiene la cantidad total donada por un cliente a partir de su nombre
-    public float obtenerTotalDonadoCliente(String nombreCliente) throws RemoteException;
+    // Obtiene la cantidad total donada en un servidor
+    public float obtenerSubtotalDonado() throws RemoteException;
 }
