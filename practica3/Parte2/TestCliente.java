@@ -76,12 +76,30 @@ public class TestCliente {
             System.out.println("Cantidad donada total: " + servidor.obtenerSubtotalDonado());
 
             // Segunda donacion (50)
+            cantidad = 50.0f;
             servidor.realizarDonacion(cliente, cantidad);
             System.out.println("Donacion: " + cantidad);
             System.out.println("Cantidad donada total: " + servidor.obtenerSubtotalDonado());
 
             System.out.println();
+
+            // Pruebas de consultar numero de donaciones
+            // Numero de donaciones del cliente Pepe
+            System.out.println("El cliente " + cliente + " ha donado " + servidor.obtenerNumeroDonacionesCliente(cliente) + " veces");
             
+            // Numero de donaciones del cliente Antonio
+            cliente = "Antonio";
+            System.out.println("El cliente " + cliente + " ha donado " + servidor.obtenerNumeroDonacionesCliente(cliente) + " veces");
+            
+            // Pruebas de consultar donacion maxima
+            // Donacion maxima del cliente Pepe
+            cliente = "Pepe";
+            System.out.println("La donacion maxima del cliente " + cliente + " es " + servidor.obtenerDonacionMaximaCliente(cliente));
+
+            // Donacion maxima del cliente Antonio
+            cliente = "Antonio";
+            System.out.println("La donacion maxima del cliente " + cliente + " es " + servidor.obtenerDonacionMaximaCliente(cliente));
+
         } catch(NotBoundException | RemoteException e) {
             System.err.println("Exception del sistema: " + e);
         }

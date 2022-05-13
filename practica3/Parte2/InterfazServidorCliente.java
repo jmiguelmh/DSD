@@ -18,4 +18,13 @@ public interface InterfazServidorCliente extends Remote {
 
     // Obtiene la cantidad total donada en un servidor
     public float obtenerSubtotalDonado() throws RemoteException;
+
+    // Obtiene la cantidad total donada a un servidor por un cliente
+    public float obtenerDonacionCliente(String nombreCliente) throws RemoteException;
+
+    // Obtiene el numero de donaciones de un cliente
+    public int obtenerNumeroDonacionesCliente(String nombreCliente) throws RemoteException;
+
+    // Obtiene la donacion maxima de un servidor hecha por un cliente
+    public float obtenerDonacionMaximaCliente(String nombreCliente) throws RemoteException;
 }

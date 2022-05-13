@@ -4,12 +4,18 @@ public class Cliente {
     private String nombre;
     private String password;
     private float donacion;
+    private float donacionTotal;
+    private int numeroDonaciones;
+    private float donacionMaxima;
 
     Cliente(String nombre, String password)
     {
         this.nombre = nombre;
         this.password = password;
         this.donacion = 0.0f;
+        this.donacionTotal = 0.0f;
+        this.numeroDonaciones = 0;
+        this.donacionMaxima = 0.0f;
     }
 
     public String obtenerNombre()
@@ -22,9 +28,24 @@ public class Cliente {
         return password;
     }
 
-    public float obtenerDonacion()
+    public float obtenerUltimaDonacion()
     {
         return donacion;
+    }
+
+    public float obtenerDonacionTotal()
+    {
+        return donacionTotal;
+    }
+
+    public int obtenerNumeroDonaciones()
+    {
+        return numeroDonaciones;
+    }
+
+    public float obtenerDonacionMaxima()
+    {
+        return donacionMaxima;
     }
 
     public void cambiarNombre(String nombre)
@@ -37,9 +58,19 @@ public class Cliente {
         this.password = password;
     }
 
-    public void cambiarDonacion(float donacion)
+    public void donar(float donacion)
     {
-        if(donacion > this.donacion)
-            this.donacion = donacion;
+        this.donacion = donacion;
+        this.donacionTotal += donacion;
+
+        if(this.donacion > this.donacionMaxima)
+            this.donacionMaxima = this.donacion;
+        
+            this.incrementarNumeroDonaciones();
+    }
+
+    public void incrementarNumeroDonaciones()
+    {
+        this.numeroDonaciones++;
     }
 }

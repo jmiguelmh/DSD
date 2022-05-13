@@ -57,7 +57,7 @@ public class DonacionesServidor extends UnicastRemoteObject implements InterfazS
     public void realizarDonacion(String nombreCliente, float donacion) throws RemoteException {
         Cliente cliente = clientesRegistrados.get(nombreCliente);
         this.incrementarSubtotalDonado(donacion);
-        cliente.cambiarDonacion(cliente.obtenerDonacion() + donacion);
+        cliente.donar(donacion);
         System.out.println("El cliente con el nombre " + nombreCliente + " ha donado " + donacion);
     }
 
@@ -146,5 +146,26 @@ public class DonacionesServidor extends UnicastRemoteObject implements InterfazS
         String passwordCliente = clientesRegistrados.get(nombreCliente).obtenerPassword();
 
         return password.equals(passwordCliente);
+    }
+
+    // Obtiene la cantidad total donada por un cliente
+    @Override
+    public float obtenerDonacionCliente(String nombreCliente) throws RemoteException {
+        Cliente cliente = clientesRegistrados.get(nombreCliente);
+        return cliente.obtenerDonacionMaxima();
+    }
+
+    // Obtiene el numero de donaciones que ha hecho un cliente
+    @Override
+    public int obtenerNumeroDonacionesCliente(String nombreCliente) throws RemoteException {
+        Cliente cliente = clientesRegistrados.get(nombreCliente);
+        return cliente.obtenerNumeroDonaciones();
+    }
+
+    // Obtiene la donacion maxima hecha por un cliente al servidor
+    @Override
+    public float obtenerDonacionMaximaCliente(String nombreCliente) throws RemoteException {
+        Cliente cliente = clientesRegistrados.get(nombreCliente);
+        return cliente.obtenerDonacionMaxima();
     }
 }
