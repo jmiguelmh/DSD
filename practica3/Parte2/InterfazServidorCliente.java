@@ -1,10 +1,15 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import java.util.ArrayList;
+
 // Interfaz utilizada por los servidores de cara al cliente
 
-public interface InterfazServidorCliente extends Remote {
+public interface InterfazServidorCliente extends Remote { 
     
+    // Comprueba si un cliente esta registrado
+    public boolean registrado(String nombreCliente) throws RemoteException;
+
     // Realiza registro de un cliente a partir de su nombre y password
     // Devuelve true si se registra el cliente (no existe), false si no se registra (ya existe)
     public boolean realizarRegistro(String nombreCliente, String password) throws RemoteException;
@@ -27,4 +32,7 @@ public interface InterfazServidorCliente extends Remote {
 
     // Obtiene la donacion maxima de un servidor hecha por un cliente
     public float obtenerDonacionMaximaCliente(String nombreCliente) throws RemoteException;
+
+    // Obtiene el historial de donaciones de un cliente a un servidor
+    public ArrayList<Float> obtenerHistorialDonaciones(String nombreCliente) throws RemoteException;
 }

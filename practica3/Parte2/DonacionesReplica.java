@@ -6,6 +6,8 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import java.util.ArrayList;
+
 public class DonacionesReplica extends UnicastRemoteObject implements InterfazServidorCliente, InterfazServidorReplica {
     private String servidor;
     private String replica;
@@ -17,6 +19,12 @@ public class DonacionesReplica extends UnicastRemoteObject implements InterfazSe
         this.servidor = servidor;
         this.replica = replica;
         clientesRegistrados = new HashMap<>();
+    }
+
+    // Comprueba si un cliente ya esta registrado
+    @Override
+    public boolean registrado(String nombreCliente) throws RemoteException {
+        return clientesRegistrados.containsKey(nombreCliente);
     }
 
     // Realiza el registro de un cliente a partir de su nombre y password
@@ -152,7 +160,7 @@ public class DonacionesReplica extends UnicastRemoteObject implements InterfazSe
     @Override
     public float obtenerDonacionCliente(String nombreCliente) throws RemoteException {
         Cliente cliente = clientesRegistrados.get(nombreCliente);
-        return cliente.obtenerDonacionMaxima();
+        return cliente.obtenerDonacionTotal();
     }
 
     // Obtiene el numero de donaciones que ha hecho un cliente
@@ -167,5 +175,12 @@ public class DonacionesReplica extends UnicastRemoteObject implements InterfazSe
     public float obtenerDonacionMaximaCliente(String nombreCliente) throws RemoteException {
         Cliente cliente = clientesRegistrados.get(nombreCliente);
         return cliente.obtenerDonacionMaxima();
+    }
+
+    // Obtiene el historial de donaciones de un cliente que ha hecho al servidor
+    @Override
+    public ArrayList<Float> obtenerHistorialDonaciones(String nombreCliente) throws RemoteException {
+        Cliente cliente = clientesRegistrados.get(nombreCliente);
+        return cliente.obtenerHistorialDonaciones();
     }
 }

@@ -3,7 +3,23 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import java.util.ArrayList;
+
 public class TestCliente {
+    public static void imprimirHistorialDonaciones(String nombreCliente, ArrayList<Float> historial) {
+        
+        if(historial.isEmpty()) {
+            System.out.println("El cliente " + nombreCliente + " no ha realizado ninguna donacion");
+        }
+        else {
+            System.out.println("Historial de donaciones del cliente " + nombreCliente + ":");
+            
+            for(int i = 0; i < historial.size(); i++) {
+                System.out.println("Donacion " + (i+1) + ": " + historial.get(i));
+            }
+        }
+    }
+
     public static void main(String[] args) {
         String host = "localhost";
         String nombreServidor = "servidor";
@@ -91,14 +107,31 @@ public class TestCliente {
             cliente = "Antonio";
             System.out.println("El cliente " + cliente + " ha donado " + servidor.obtenerNumeroDonacionesCliente(cliente) + " veces");
             
+            System.out.println();
+            
             // Pruebas de consultar donacion maxima
             // Donacion maxima del cliente Pepe
             cliente = "Pepe";
             System.out.println("La donacion maxima del cliente " + cliente + " es " + servidor.obtenerDonacionMaximaCliente(cliente));
-
+            
             // Donacion maxima del cliente Antonio
             cliente = "Antonio";
             System.out.println("La donacion maxima del cliente " + cliente + " es " + servidor.obtenerDonacionMaximaCliente(cliente));
+            
+            System.out.println();
+            
+            //Pruebas de consultar historial de donaciones
+            // Historial de Pepe
+            cliente = "Pepe";
+            ArrayList<Float> historial = servidor.obtenerHistorialDonaciones(cliente);
+            imprimirHistorialDonaciones(cliente, historial);
+            
+            System.out.println();
+
+            // Historial de Antonio
+            cliente = "Antonio";
+            historial = servidor.obtenerHistorialDonaciones(cliente);
+            imprimirHistorialDonaciones(cliente, historial);
 
         } catch(NotBoundException | RemoteException e) {
             System.err.println("Exception del sistema: " + e);

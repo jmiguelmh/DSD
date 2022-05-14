@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+
 // Clase utilizada para representar a los clientes
 // Sus atributos son nombre, password y donacion
 public class Cliente {
     private String nombre;
     private String password;
-    private float donacion;
+    private ArrayList<Float> donaciones;
     private float donacionTotal;
     private int numeroDonaciones;
     private float donacionMaxima;
@@ -12,7 +14,7 @@ public class Cliente {
     {
         this.nombre = nombre;
         this.password = password;
-        this.donacion = 0.0f;
+        this.donaciones = new ArrayList<>();
         this.donacionTotal = 0.0f;
         this.numeroDonaciones = 0;
         this.donacionMaxima = 0.0f;
@@ -28,9 +30,14 @@ public class Cliente {
         return password;
     }
 
+    public ArrayList<Float> obtenerHistorialDonaciones()
+    {
+        return donaciones;
+    }
+
     public float obtenerUltimaDonacion()
     {
-        return donacion;
+        return donaciones.get(donaciones.size() - 1);
     }
 
     public float obtenerDonacionTotal()
@@ -60,11 +67,11 @@ public class Cliente {
 
     public void donar(float donacion)
     {
-        this.donacion = donacion;
+        this.donaciones.add(donacion);
         this.donacionTotal += donacion;
 
-        if(this.donacion > this.donacionMaxima)
-            this.donacionMaxima = this.donacion;
+        if(donacion > this.donacionMaxima)
+            this.donacionMaxima = donacion;
         
             this.incrementarNumeroDonaciones();
     }

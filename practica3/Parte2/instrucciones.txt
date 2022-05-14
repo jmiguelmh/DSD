@@ -12,3 +12,4 @@ java -cp . -Dajava.rmi.server.codebase=file:./ -Djava.rmi.server.hostname=localh
 
 5. Ejecutar el programa de pruebas del cliente:
 java -cp . -Djava.security.policy=server.policy TestCliente
+java -cp . -Djava.security.policy=server.policy ProgramaCliente
