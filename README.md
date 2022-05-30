@@ -15,6 +15,7 @@ El desarrollo de la práctica consiste en la creación de una calculadora distri
 #### Compilación
 Primero es necesario comprobar si el servicio rpcbind está activo:<br />
 *systemctl status rpcbind*
+
 En el caso de que no lo esté se puede lanzar con:<br />
 *systemctl start rpcbind*
 
