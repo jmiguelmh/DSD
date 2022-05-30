@@ -60,4 +60,17 @@ Después ejecutamos el cliente:
 La calculadora está implementa con un sistema de menús que permite al usuario navegar a través de ellos y seleccionar la operación que desea ejecutar
 
 ## Práctica 3 - RMI
-El objetivo de esta práctica es apreder a utilizar las invocaciones a procedimiento remoto que implementa Java RMI.
+### Introducción
+El objetivo de esta práctica es apreder a utilizar las invocaciones a procedimiento remoto que implementa Java RMI. La práctica consiste en dos partes.
+
+### Parte 1
+Esta parte consiste en ejecutar varios ejemplos aportados por el profesor para lograr un mayor entendimiento de Java RMI.
+El primer ejemplo es un programa en el que el cliente envía un identificador y el servidor lo devuelve. Además si este identificador el servidor se espera 5 segundos antes de reenviarlo
+El segundo ejemplo es parecido al primero, pero en este se lanzan varias hebras que mandan cada una un identificador. Este ejemplo trata de mostrar el entrelazamiento de las ejecuciones de cada hebra debido a la concurrencia que se produce entre estas.
+El tercer ejemplo es un programa en el que hay dos servidores, uno réplica de otro. También se muestra como registrar un servicio en rmiregistry mediante código de Java.
+
+#### Compilación y ejecución de los ejemplos
+El primer paso es compilar todos archivos Java:
+*javac \*.java*
+
+### Parte 2
