@@ -71,7 +71,30 @@ El segundo ejemplo es parecido al primero, pero en este se lanzan varias hebras 
 El tercer ejemplo es un programa en el que hay dos servidores, uno réplica de otro. También se muestra como registrar un servicio en rmiregistry mediante código de Java.
 
 #### Compilación y ejecución de los ejemplos
-El primer paso es compilar todos archivos Java:\n
+El primer paso es compilar todos archivos Java:<br />
 *javac \*.java*
 
+Se lanza rmiregistry en segundo plano (sólo para los ejemplos 1 y 2):<br />
+*rmi registry &*
+
+Se lanza el servidor (repetir para el servidor réplica en el ejemplo 3):<br />
+*java -cp . -Djava.rmi.server.codebase=file:./ -Djava.rmi.server.hostname=localhost -Djava.security.policy=server.policy <servidor>*
+  
+Se lanza el cliente:<br />
+*java -cp . -Djava.security.policy=server.policy <cliente> localhost <parámetros>*
+
 ### Parte 2
+Esta parte de la práctica consiste en implementar un servidor replicado encargado de llevar la gestión de donaciones por parte de los clientes al servidor. Hay dos servidores: uno principal y otro réplica. Cuando un cliente se registra, este se almacena en el servidor con menor número de clientes.
+
+#### Compilación y ejecución
+El primer paso es compilar todos archivos Java:<br />
+*javac \*.java*
+
+Se lanza el servidor principal:<br />
+*java -cp . -Djava.rmi.server.codebase=file:./ -Djava.rmi.server.hostname=localhost -Djava.security.policy=server.policy Servidor*
+
+Se lanza el servidor réplica:<br />
+*java -cp . -Djava.rmi.server.codebase=file:./ -Djava.rmi.server.hostname=localhost -Djava.security.policy=server.policy ServidorReplica*
+
+Se lanza el cliente:<br />
+*java -cp . -Djava.security.policy=server.policy ProgramaCliente*
