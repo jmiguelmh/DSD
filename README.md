@@ -8,10 +8,10 @@ Esta práctica consiste en una introducción a SSH. Los principales objetivos de
 - Realizar una conexión SSH sin contraseña (ssh-keygen).
 
 ## Práctica 2 - Sun RPC y Apache Thrift
-### Sun RPC
-#### Introdución
+### Introdución
 El desarrollo de la práctica consiste en la creación de una calculadora distribuida, en la que existe un cliente y un servidor. El cliente solicita al usuario, de forma interactiva mediante un sistema de menús, que operaciones desea realizar (aritméticas, trigonométricas o trigonométricas inversas). A continuación, el programa cliente envía los datos y la operación al servidor que se encargará de realizar los calculos necesarios y devolver el resultado de la operación al cliente. Finalmente el cliente recibe el resultado y lo muestra por pantalla al usuario.
 
+### Sun RPC
 #### Compilación
 Primero es necesario comprobar si el servicio rpcbind está activo:
 *systemctl status rpcbind*
@@ -33,6 +33,29 @@ Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo
 
 Después ejecutamos el cliente que require como parámetros la dirección IP de donde se encuentra el servidor, si éste se encuentra en la misma máquina se puede utilizar localhost:
 *./calculadora_client localhost*
+
+La calculadora está implementa con un sistema de menús que permite al usuario navegar a través de ellos y seleccionar la operación que desea ejecutar
+
+### Apache Thrift
+#### Compilación
+Primero es necesario tener instalado el compilador, ya dependiento de que distribución se utilice se utilizará un gestor de paquetes u otro. En mi caso al ser Ubuntu sería:
+*sudo apt install thrift-compiler*
+
+Es necesario instalar Python y thrift en los paquetes de python:
+*sudo apt install python*
+*pip install thrift*
+
+Para generar los archivos Python necesarios a partir del archivo calculadora.thrift (fichero en el que se han definido las funciones de la calculadora) se una el comando:
+*thrift -gen py calculadora.thrift*
+
+El último paso es mover los archivos cliente.py y servidor.py dentro del directorio gen-py.
+
+#### Ejecución
+Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo que sea en segundo plano, sino en otra terminal):
+*python3 servidor.py &*
+
+Después ejecutamos el cliente:
+*python3 cliente.py localhost*
 
 La calculadora está implementa con un sistema de menús que permite al usuario navegar a través de ellos y seleccionar la operación que desea ejecutar
 
