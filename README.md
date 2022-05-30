@@ -13,9 +13,9 @@ El desarrollo de la práctica consiste en la creación de una calculadora distri
 
 ### Sun RPC
 #### Compilación
-Primero es necesario comprobar si el servicio rpcbind está activo:
+Primero es necesario comprobar si el servicio rpcbind está activo:<br />
 *systemctl status rpcbind*
-En el caso de que no lo esté se puede lanzar con:\n
+En el caso de que no lo esté se puede lanzar con:<br />
 *systemctl start rpcbind*
 
 A continuación, se generan todos los códigos fuente de C necesarios a partir del fichero calculadora.x (fichero donde se han definido todas la funciones que admite la calculadora):<br />
