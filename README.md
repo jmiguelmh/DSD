@@ -18,43 +18,43 @@ Primero es necesario comprobar si el servicio rpcbind está activo:
 En el caso de que no lo esté se puede lanzar con:\n
 *systemctl start rpcbind*
 
-A continuación, se generan todos los códigos fuente de C necesarios a partir del fichero calculadora.x (fichero donde se han definido todas la funciones que admite la calculadora):\n
+A continuación, se generan todos los códigos fuente de C necesarios a partir del fichero calculadora.x (fichero donde se han definido todas la funciones que admite la calculadora):<br />
 *rpcgen -NCa calculadora.x*
 
 Se deben sustituir los archivos calculadora_client.c y calculadora_server.c ya que los que genera por defecto rpcgen son plantilla vacías.
 También es necesario modificar el archivo Makefile.calculadora, en concreto hay que añadirle el argumento -lm en LDLIBS ya que se utilizan funciones de la librería math.h.
 
-Finalmente compilamos los archivos mediante el Makefile:\n
+Finalmente compilamos los archivos mediante el Makefile:<br />
 *make -f Makefile.calculadora*
 
 #### Ejecución
-Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo que sea en segundo plano, sino en otra terminal):\n
+Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo que sea en segundo plano, sino en otra terminal):<br />
 *./calculadora_server &*
 
-Después ejecutamos el cliente que require como parámetros la dirección IP de donde se encuentra el servidor, si éste se encuentra en la misma máquina se puede utilizar localhost:\n
+Después ejecutamos el cliente que require como parámetros la dirección IP de donde se encuentra el servidor, si éste se encuentra en la misma máquina se puede utilizar localhost:<br />
 *./calculadora_client localhost*
 
 La calculadora está implementa con un sistema de menús que permite al usuario navegar a través de ellos y seleccionar la operación que desea ejecutar
 
 ### Apache Thrift
 #### Compilación
-Primero es necesario tener instalado el compilador, ya dependiento de que distribución se utilice se utilizará un gestor de paquetes u otro. En mi caso al ser Ubuntu sería:\n
+Primero es necesario tener instalado el compilador, ya dependiento de que distribución se utilice se utilizará un gestor de paquetes u otro. En mi caso al ser Ubuntu sería:<br />
 *sudo apt install thrift-compiler*
 
-Es necesario instalar Python y thrift en los paquetes de python:\n
-*sudo apt install python*\n
+Es necesario instalar Python y thrift en los paquetes de python:<br />
+*sudo apt install python*<br />
 *pip install thrift*
 
-Para generar los archivos Python necesarios a partir del archivo calculadora.thrift (fichero en el que se han definido las funciones de la calculadora) se una el comando:\n
+Para generar los archivos Python necesarios a partir del archivo calculadora.thrift (fichero en el que se han definido las funciones de la calculadora) se una el comando:<br />
 *thrift -gen py calculadora.thrift*
 
 El último paso es mover los archivos cliente.py y servidor.py dentro del directorio gen-py.
 
 #### Ejecución
-Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo que sea en segundo plano, sino en otra terminal):\n
+Para ejecutar la calculadora primero es necesario lanzar el servidor (recomiendo que sea en segundo plano, sino en otra terminal):<br />
 *python3 servidor.py &*
 
-Después ejecutamos el cliente:\n
+Después ejecutamos el cliente:<br />
 *python3 cliente.py localhost*
 
 La calculadora está implementa con un sistema de menús que permite al usuario navegar a través de ellos y seleccionar la operación que desea ejecutar
