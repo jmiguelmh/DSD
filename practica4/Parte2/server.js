@@ -7,6 +7,8 @@ var MongoClient = require('mongodb').MongoClient;
 var MongoServer = require('mongodb').Server;
 var mimeTypes = { "html": "text/html", "jpeg": "image/jpeg", "jpg": "image/jpeg", "png": "image/png", "js": "text/javascript", "css": "text/css", "swf": "application/x-shockwave-flash"};
 
+
+// El servidor ofrece la página client.html al conectarse
 var httpServer = http.createServer(
 	function(request, response) {
 		var uri = url.parse(request.url).pathname;
@@ -39,96 +41,133 @@ var httpServer = http.createServer(
 	}
 );
 
-var estadoPersiana = 'abierta';
-var estadoAC = 'apagado';
+// Estados de la persiana y el ac, por defecto activos
+var estado_persiana = 'abierta';
+var estado_ac = 'activo';
+var estado_luz = 'encendida';
 
-MongoClient.connect("mongodb://localhost:27017/", function(err, db) {
-    if(!err){
-		console.log("Conectado a Base de Datos");
-	}
+MongoClient.connect("mongodb://localhost:27017/datos_sensores", function(err, db) {
 
     var dbo = db.db("practica4");
-	httpServer.listen(8080);
-	var io = socketio(httpServer);
+	httpServer.listen(8080); // Ponemos el servidor a escuchar en el puerto 8080
+	var io = socketio(httpServer); // Ponemos los sockets a escuchar en el servidor
+	
+	dbo.createCollection("sensores", function(err, collection){
+		io.sockets.on('connection',function(client) {
 
-    dbo.createCollection("sensores", function(err, collection) {
-        if(!err){
-			console.log("Colección creada en Mongo: " + collection.collectionName);
-		}
+			// "poner", se refiere a cuando los sensores publican datos
+	    	client.on('poner', function(data) {
+	    		// Insertamos los datos en la colección
+				dbo.collection("sensores").insertOne(data, {safe:true}, function(err, result) {});
+				
+				// Actualizamos todos los clientes añadiendo los últimos datos
+				io.sockets.emit('actualizar', 
+					"temperatura: " + data.temperatura + 
+					", luminosidad: " + data.luminosidad + 
+					", humedad: " + data.humedad +
+					", fecha: "+ data.time );
 
-        io.sockets.on('connection', function(client) {
-			client.on('poner', function(data) {
-                collection.insertOne(data, {safe:true}, function(err, result) {
-                    if(!err){
-                        console.log("Elemento insertado en la colección");
-                    }
-                });
-                
-                var str = "luminosidad: " + data.luminosidad + ", temperatura: " + data.temperatura + ", fecha: " + data.time;
-                io.sockets.emit('actualizar', str);
-                io.sockets.emit('actualizar_luminosidad', data.luminosidad);
-                io.sockets.emit('actualizar_temperatura', data.temperatura);
-            });
+				io.sockets.emit('actualizar_temp', data.temperatura);
+				io.sockets.emit('actualizar_lum', data.luminosidad);
+				io.sockets.emit('actualizar_hum', data.humedad)
+			});
+
+	    	// "obtener", se refiere a cuando un cliente pide los últimos datos de los sensores
+	    	client.on('obtener', function () {
+				dbo.collection("sensores").find().sort({_id:-1}).limit(1).forEach(function(result){
+					client.emit('actualizar', 
+						"temperatura: " + result.temperatura + 
+						", luminosidad: " + result.luminosidad + 
+						", humedad: " + result.humedad +
+						", fecha: "+ result.time );
+
+				});
+			});
+
+	    	// "obtener_temp", se refiere a cuando un cliente pide sólo la última temperatura registrada
+			client.on('obtener_temp', function () {
+				dbo.collection("sensores").find().sort({_id:-1}).limit(1).forEach(function(result){
+					client.emit('actualizar_temp',result.temperatura);
+				});
+			});
+
+			// "obtener_lum", se refiere a cuando un cliente pide sólo el último valor de luminosidad registrado
+			client.on('obtener_lum', function () {
+				dbo.collection("sensores").find().sort({_id:-1}).limit(1).forEach(function(result){
+					client.emit('actualizar_lum',result.luminosidad);
+				});
+			});
+
+			// "obtener_hum", se refiere a cuando un cliente pide sólo el último valor de humedad registrado
+			client.on('obtener_hum', function () {
+				dbo.collection("sensores").find().sort({_id:-1}).limit(1).forEach(function(result){
+					client.emit('actualizar_hum',result.humedad);
+				});
+			});
+
+			// Cambia el estado de la persiana
+			client.on('cambiar_estado_persiana', function(){
+				if (estado_persiana == 'abierta')
+					estado_persiana = 'cerrada';
+				else
+					estado_persiana = 'abierta';
+
+				// Se notifica el nuevo estado a todos los clientes
+				io.sockets.emit('actualizar_estado_persiana',estado_persiana);
+				console.log("servidor: "+estado_persiana);
+			});
+
+			// Cambia el estado del ac
+			client.on('cambiar_estado_ac', function(){
+				if (estado_ac == 'activo')
+					estado_ac = 'apagado';
+				else
+					estado_ac = 'activo';
+
+				// Se notifica el nuevo estado a todos los clientes
+				io.sockets.emit('actualizar_estado_ac',estado_ac);
+			});
+
+			// Cambia el estado de la luz
+			client.on('cambiar_estado_luz', function(){
+				if (estado_luz == 'encendida')
+					estado_luz = 'apagada';
+				else
+					estado_luz = 'encendida';
+
+				// Se notifica el nuevo estado a todos los clientes
+				io.sockets.emit('actualizar_estado_luz',estado_luz);
+			});
+
+			client.on('obtener_estado_persiana', function(){
+				client.emit('obt_estado_persiana', estado_persiana);
+			});
+
+			client.on('obtener_estado_luz', function(){
+				client.emit('obt_estado_luz', estado_luz);
+			});
+
+			client.on('obtener_estado_ac', function(){
+				client.emit('obt_estado_ac', estado_ac);
+			});
+
+			client.on('cerrar_persiana', function(){
+				estado_persiana = 'cerrada';
+				io.sockets.emit('actualizar_estado_persiana', estado_persiana);
+			});
+
+			// Los dos siguientes eventos se producen cuando se supera un umbral de luminosidad/temperatura
+			client.on('alerta_lum',function(data){
+				io.sockets.emit('actualizar_advertencia_lum',data);
+                console.log("Advertencia: luminosidad");
+			});
             
-            client.on('obtener', function() {
-                collection.find().sort({_id:-1}).limit(1).forEach(function(result) {
-                    var str = "luminosidad: " + data.luminosidad + ", temperatura: " + data.temperatura + ", fecha: " + data.time;
-                    client.emit('actualizar', str);
-                });
-            });
-
-            client.on('obtener_luminosidad', function() {
-                collection.find().sort({_id:-1}).limit(1).forEach(function(result) {
-                    client.emit('actualizar_luminosidad', result.luminosidad);
-                });
-            });
-
-            client.on('obtener_temperatura', function() {
-                collection.find().sort({_id:-1}).limit(1).forEach(function(result) {
-                    client.emit('actualizar_temperatura', result.temperatura);
-                });
-            });
-
-            client.on('cambiar_estado_persiana', function() {
-                if(estadoPersiana == 'abierta')
-                    estadoPersiana = 'cerrada';
-                else
-                    estadoPersiana = 'abierta';
-                
-                io.sockets.emit('actualizar_estado_persiana', estadoPersiana);
-                console.log("Servidor: el estado de la persiana es " + estadoPersiana);
-            });
-
-            client.on('cambiar_estado_a/c', function() {
-                if(estadoAC == 'apagado')
-                    estadoAC = 'encendido';
-                else
-                    estadoAC = 'apagado';
-                
-                io.sockets.emit('actualizar_estado_a/c', estadoAC);
-                console.log("Servidor: el estado del A/C es " + estadoAC);
-            });
-
-            client.on('obtener_estado_persiana', function() {
-                client.emit('obt_estado_persiana', estadoPersiana);
-            });
-
-            client.on('obtener_estado_a/c', function() {
-                client.emit('obt_estado_a/c', estadoAC);
-            });
-
-            client.on('cerrar_persiana', function() {
-                estadoPersiana = 'cerrada';
-                io.sockets.emit('actualizar_estado_persiana', estadoPersiana);
-            });
-
-            client.on('alerta_luminosidad', function() {
-                io.sockets.emit('actualizar_advertencia_luminosidad', estadoPersiana);
-            });
-
-            client.on('alerta_temperatura', function() {
-                io.sockets.emit('actualizar_advertencia_temperatura', estadoPersiana);
-            });
-		})
+			client.on('alerta_temp',function(data){
+                io.sockets.emit('actualizar_advertencia_temp',data);
+                console.log("Advertencia: temperatura");
+			});
+	    });
     });
 });
+
+console.log("Servicio MongoDB iniciado");

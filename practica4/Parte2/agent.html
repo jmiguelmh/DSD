@@ -1,39 +1,55 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Agent</title>
-    </head>
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-        var serviceURL = 'localhost:8080';
-        var socket = io.connect(serviceURL);
-        var temperaturaMaxima = 30;
-        var luminosidadMaxima = 50;
-        var temperaturaActual = 0;
-        var luminosidadActual = 0;
-        var estadoPersiana = '';
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Agente</title>
+	</head>
 
-        function cerrarPersiana() {
-            socket.emit('cerrar_persiana');
-        }
-        
-        socket.on('actualizar_temperatura', function(data) {
-            temperaturaActual = data;
-            if(temperaturaActual > temperaturaMaxima) {
-                socket.emit('alerta_temperatura');
-                cerrarPersiana();
-            }
-        });
+	<body>
+	</body>
 
-        socket.on('actualizar_luminosidad', function(data) {
-            luminosidadActual = data;
-            if(luminosidadActual > luminosidadMaxima) {
-                socket.emit('alerta_luminosidad');
-                cerrarPersiana();
-            }
-        });
+	<script src="/socket.io/socket.io.js"></script>
 
-        socket.emit('obtener_luminosidad');
-        socket.emit('obtener_temperatura');
-    </script>
+	<script type="text/javascript">
+		var serviceURL = 'localhost:8080';
+		var socket = io.connect(serviceURL);
+		var temp_maxima = 25;
+		var lum_maxima = 30;
+		var temp_actual = 0;
+		var lum_actual = 0;
+		var estado_persiana = '';
+		function cerrar_persiana(){
+
+			socket.emit('cerrar_persiana');
+		}
+
+		socket.on('obt_estado_persiana', function(data){
+				
+			estado_persiana = data;
+		});
+
+		socket.on('actualizar_temp', function(data){
+			temp_actual = data;
+            console.log("actualizar_temp");
+
+			if (temp_actual > temp_maxima){
+				socket.emit('alerta_temp',temp_actual);
+				cerrar_persiana();
+			}
+		});
+
+		socket.on('actualizar_lum', function(data){
+			lum_actual = data;
+            console.log("actualizar_lum");
+
+			if (lum_actual > lum_maxima){
+				socket.emit('alerta_lum',lum_actual);
+				cerrar_persiana();
+			}
+		});
+
+		socket.emit('obtener_temp');
+		socket.emit('obtener_lum');
+
+		
+	</script>
 </html>
