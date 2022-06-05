@@ -11,7 +11,7 @@ var mimeTypes = { "html": "text/html", "jpeg": "image/jpeg", "jpg": "image/jpeg"
 var httpServer = http.createServer(
 	function(request, response) {
 		var uri = url.parse(request.url).pathname;
-		if (uri=="/") uri = "/mongo-test_vF.html";
+		if (uri=="/") uri = "/mongo-test.html";
 		var fname = path.join(process.cwd(), uri);
 		fs.exists(fname, function(exists) {
 			if (exists) {
@@ -48,7 +48,7 @@ MongoClient.connect("mongodb://localhost:27017/", function(err, db) {
 	var dbo = db.db("pruebaBaseDatos");
 	var msgCliente = null;
 	httpServer.listen(8080);
-	var io = socketio.listen(httpServer);
+	var io = socketio(httpServer);
 
 	dbo.createCollection("pruebaBD2", function(err, collection){
 		if(!err){

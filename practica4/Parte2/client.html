@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Client</title>
+    </head>
+    <body>
+        <div id="resultados">
+            <ul id="lista"></ul>
+        </div>
+        <div id="estado_sensores">
+            <p> Estado de la persiana: <span id="estado_persiana"></span></p>
+            <p> Estado del aire acondicionado: <span id="estado_a/c"></span></p>
+            <button id="boton_persiana"> Accionar persiana </button>
+            <button id="boton_a/c"> Accionar aire acondicionado </button>
+        </div>
+        <div>
+            <p id="advertencia_lum" style="color: red"></p>
+            <p id="advertencia_temp" style="color: red"></p>
+        </div>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        function actualizarLista(datos) {
+            var listaElementos = document.getElementById("lista");
+            var listaItems = document.createElement("li");
+            listaItems.innerHTML = datos;
+            listaElementos.appendChild(listaItems);
+        }
+
+        var serviceURL = 'localhost:8080';
+        var socket = io.connect(serviceURL);
+
+        socket.emit('obtener');
+        socket.on('actualizar', function(data) {
+            actualizarLista(data);
+            document.getElementById('advertencia_lum').innerHTML = '';
+            document.getElementById('advertencia_temp').innerHTML = '';
+        });
+
+        socket.on('actualizar_estado_persiana', function(data) {
+            var estado = document.getElementById('estado_persiana');
+            estado.innerHTML = data;
+        });
+
+        socket.on('actualizar_estado_a/c', function(data) {
+            var estado = document.getElementById('estado_a/c');
+            estado.innerHTML = data;
+        });
+
+        socket.on('obt_estado_persiana', function(data) {
+            var estado = document.getElementById('estado_persiana');
+            estado.innerHTML = data;
+        });
+
+        socket.on('obt_estado_a/c', function(data) {
+            var estado = document.getElementById('estado_a/c');
+            estado.innerHTML = data;
+        });
+        
+        socket.emit('obtener_estado_persiana');
+        socket.emit('obtener_estado_a/c');
+
+        var boton_persiana = document.getElementById('boton_persiana');
+        boton_persiana.onclick = function() {
+            socket.emit('cambiar_estado_persiana');
+        }
+
+        var boton_ac = document.getElementById('boton_a/c');
+        boton_persiana.onclick = function() {
+            socket.emit('cambiar_estado_a/c');
+        }
+
+        socket.on('actualizar_advertencia_luminosidad', function(data) {
+            var advertencia = "Advertencia: la luminosidad está por encima del valor máximo (" + data + ")";
+            document.getElementById('advertencia_lum').innerHTTML = advertencia;
+        });
+
+        socket.on('actualizar_advertencia_temperatura', function(data) {
+            var advertencia = "Advertencia: la temperatura está por encima del valor máximo (" + data + ")";
+            document.getElementById('advertencia_temp').innerHTTML = advertencia;
+        });
+    </script>
+</html>

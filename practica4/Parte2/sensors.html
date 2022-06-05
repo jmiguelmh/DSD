@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Sensors</title>
+    </head>
+    <body>
+        <form action="javascript:void(0):" onsubmit="javascript:enviarSensores();">
+            Luminosidad: <input type="label" id="luminosidad"/><br />
+            Temperatura: <input type="label" id="temperatura"/><br />
+            <input type="submit" value="Actualizar"/>
+        </form>
+        <span id="resultado"></span>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var serviceURL = 'localhost:8080';
+        
+        function enviarSensores() {
+            var lum = document.getElementById("luminosidad").value;
+            var temp = document.getElementById("temperatura").value;
+            
+            var serviceURL = 'localhost:8080';
+            var socket = io.connect(serviceURL);
+            var fecha = new Date();
+            socket.emit('poner', {luminosidad: lum, temperatura: temp, time:fecha});
+        }
+    </script>
+</html>
