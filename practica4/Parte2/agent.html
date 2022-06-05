@@ -1,4 +1,56 @@
 <html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Agente</title>
+	</head>
+
+	<body>
+	</body>
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script type="text/javascript">
+		var serviceURL = 'localhost:8080';
+		var socket = io.connect(serviceURL);
+		var temp_maxima = 30;
+		var luz_maxima = 50;
+		var temp_actual = 0;
+		var luz_actual = 0;
+		var estado_persiana = '';
+		var estado_aa = '';
+
+		function cerrar_persiana(){
+
+			socket.emit('cerrar_persiana');
+		}
+		
+		socket.on('actualizar_temp', function(data){
+			temp_actual = data;
+
+			if (temp_actual > temp_maxima){
+				socket.emit('alerta_temp',temp_actual);
+				cerrar_persiana();
+			}
+		});
+
+		socket.on('actualizar_lum', function(data){
+			luz_actual = data;
+
+			if (luz_actual > luz_maxima){
+				socket.emit('alerta_lum',luz_actual);
+				cerrar_persiana();
+			}
+		});
+
+		//Actualizar en el cliente los nuevos datos.
+		socket.emit('obtener_temp');
+		socket.emit('obtener_lum');
+
+		
+	</script>
+</html>
+
+<!-- <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Agent</title>
@@ -36,4 +88,4 @@
         socket.emit('obtener_luminosidad');
         socket.emit('obtener_temperatura');
     </script>
-</html>
+</html> -->
