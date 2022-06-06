@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "axios": "^0.27.2",
-    "cheerio": "^1.0.0-rc.11",
-    "mongodb": "^4.6.0",
-    "socket.io": "^4.5.1",
-    "weather-js": "^2.0.0"
-  }
-}
