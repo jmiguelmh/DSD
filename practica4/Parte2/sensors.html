@@ -1,30 +1,44 @@
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Sensores</title>
-	</head>
-	<body>
-		<form action="javascript:void(0);" onsubmit="javascript:enviar_sensores();">
-			Temperatura: <input type="label" id="temperatura" /><br />
-			Luminosidad: <input type="label" id="luminosidad" /><br />
-			Humedad: <input type="label" id="humedad" /><br />
-			<input type="submit" value="Enviar datos de los sensores" />
-		</form>
-		<span id="resul"></span>
-	</body>
-	<script src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript">
-		var serviceURL = 'localhost:8080';
-		function enviar_sensores() {
-			var temp = document.getElementById("temperatura").value;
-			var lum = document.getElementById("luminosidad").value;
-			var hum = document.getElementById("humedad").value;
 
-		    var serviceURL = 'localhost:8080';
-			var socket = io.connect(serviceURL);
-			var d = new Date();
-			socket.emit('poner', {temperatura:temp, luminosidad:lum, humedad:hum, time:d});
-            // console.log("actualizar sensores");
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Sensores</title>
+</head>
+
+<body>
+	<form action="javascript:void(0);" onsubmit="javascript:enviar_sensores();">
+		Temperatura: <input type="label" id="temperatura" /><br /><br />
+		Luminosidad: <input type="label" id="luminosidad" /><br /><br />
+		Humedad: <input type="label" id="humedad" /><br /><br />
+		<button id="solicitar_temperatura">Comprobar temperatura tiempo-real</button><span id="temperatura_tiempo_real"></span><br /><br />
+		<input type="submit" value="Enviar datos de los sensores" />
+	</form>
+	<span id="resul"></span>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+	var serviceURL = 'localhost:8080';
+	function enviar_sensores() {
+		var temp = document.getElementById("temperatura").value;
+		var lum = document.getElementById("luminosidad").value;
+		var hum = document.getElementById("humedad").value;
+
+		var serviceURL = 'localhost:8080';
+		var socket = io.connect(serviceURL);
+		var d = new Date();
+		socket.emit('datos_actualizados', { temperatura: temp, luminosidad: lum, humedad: hum, time: d });
+
+		var boton_temperatura = document.getElementById('solicitar_temperatura');
+		boton_temperatura.onclick = function() {
+			socket.emit('pedir_temperatura');
 		}
-	</script>
+
+		socket.on('enviar_temperatura', function(temp) {
+			document.getElementById('temperatura_tiempo_real').innerHTML = temp + " ºC";
+			
+			console.log(document.getElementById('temperatura').innerHTML);
+		});
+	}
+</script>
+
 </html>
